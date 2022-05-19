@@ -1,3 +1,14 @@
+// create models folder
+// create idea.js for
+// step1: how to verify mongoose is working
+// step2: go to mongo directory
+// step3: mongo - that is the shell mongod is the execution
+// step4: within the shell show dbs - list out all the database
+// step5: use note-dev (if there is a db use the db file)
+// step6: show collections (look a the schema)  
+// step7: db.note-dev.find() - list out all the records within the db
+// step8: db.note-dev.find().pretty() - format the record as Json format
+
 // npm install express-handlebars --save
 
 // we need to create the views folder for the handlebars files
@@ -8,8 +19,25 @@
 import express from "express"; 
 // express from "express";  - express.use() -> app.use() - 實際上 app 就是 express，只是改了名字
 import { engine } from "express-handlebars";
+// load mongose
+import mongoose from "mongoose";
+// load body-parser
+import bodyParser from "body-parser"; // 將 object format，做一個 parsing
+import morgan from "morgan";
 
 const app = express(); // app 就是擁有 express 所有的 function
+
+// create mongo connection /note-dev is the database name, it is a promise object so set the response and catch 
+// database connection is done
+mongoose
+.connect("mongodb://localhost:27017/note-dev")
+.then(() => console.log("Mongodb connected..")) // 因為不需要牽涉 this，所以可以直接寫 arrow function
+.catch((err) => console.log(err));
+//因為 database / response 什麼時候回來，我們不能控制，所以要用 promise object
+
+// load Idea Model as constructor
+import Idea from "./models/Idea.js";
+//const Idea = mongoose.model("ideas");
 
 //setup handlebars middleware
 // copy 3 line from updated github
@@ -21,6 +49,17 @@ app.engine("handlebars", engine()); // 從 handlebars 該部份只抽取 engine 
 app.set("view engine", "handlebars"); // 因為要使用 template engine 它比較相似 react
 // view engine 是 under handlebars
 app.set("views", "./views"); // 將所有的 handlebars engine 放到 views 該部份的文件
+app.use(morgan("tiny")); // morgan 中間件 的好處：可以幫助追蹤 app 的數據，運行時會展示出來關係 data 的 communication
+// add methodoveride
+// app.use(express.json());
+// app.
+
+// put body-parser middleware here
+app.use(bodyParser.urlencoded({extended: false}));
+
+// parse application/json
+app.use(bodyParser.json());
+
 
 // middleware setup, example from express middleware,
 // everytime reload the route page, update time in termal
@@ -44,13 +83,20 @@ app.use(function (req, res, next) {
 // send the render page by changing sned function render function
 app.get("/", (req, res) => {
     //console.log(req.name);
-    res.render("index"); // index 的 handlebars
+    const title = "Welcome";
+    res.render("index", { title : title}); // index 的 handlebars
 });
 
 //create another route for about
 // localhost:5000/about - will get the about text
 app.get("/about", (req, res) => {
     res.render("about");  
+});
+
+// add note add routes
+// idea from
+app.get("/ideas/add", (req, res) => {
+    res.render("ideas/add");
 });
 
 const PORT = 5000;
