@@ -52,7 +52,6 @@ app.set("views", "./views"); // 將所有的 handlebars engine 放到 views 該�
 app.use(morgan("tiny")); // morgan 中間件 的好處：可以幫助追蹤 app 的數據，運行時會展示出來關係 data 的 communication
 // add methodoveride
 // app.use(express.json());
-// app.
 
 // put body-parser middleware here
 app.use(bodyParser.urlencoded({extended: false}));
@@ -98,6 +97,13 @@ app.get("/about", (req, res) => {
 app.get("/ideas/add", (req, res) => {
     res.render("ideas/add");
 });
+
+// step9: process idea from
+app.post("/ideas", (req, res) => {
+    // testing the route first
+    res.send("ok")
+    //testing the body-parser work for getting the content
+})
 
 const PORT = 5000;
 
